@@ -5,6 +5,7 @@
 import {
   defaults, getSettings, saveSettings, getApiKey, saveApiKey,
   getHistory, addHistory, clearHistory,
+  getMemos, addMemo, updateMemo, deleteMemo,
   checkDomain, extractContent, callAI, callVision, fillToPage,
   isVoiceSupported, startVoice, stopVoice, getVoiceState,
   triggerImagePick, compressImage
@@ -38,10 +39,26 @@ const resetSettingsBtn = S('#resetSettings');
 const toggleApiKeyBtn = S('#toggleApiKey');
 const clearHistoryBtn = S('#clearHistory');
 
+// Memo
+const memoPanel = S('#memoPanel');
+const memoList = S('#memoList');
+const memoEditor = S('#memoEditor');
+const memoEditorTitle = S('#memoEditorTitle');
+const memoTitleInput = S('#memoTitleInput');
+const memoContentInput = S('#memoContentInput');
+const memoColorRow = S('#memoColorRow');
+const memoBackBtn = S('#memoBackBtn');
+const memoSaveBtn = S('#memoSaveBtn');
+const newMemoBtn = S('#newMemoBtn');
+const clearMemosBtn = S('#clearMemosBtn');
+const toggleMemo = S('#toggleMemo');
+
 let settings = { ...defaults };
 let isTargetDomain = false;
 let currentTabId = null;
 let voiceActive = false;
+let editingMemoId = null;
+let editingMemoColor = 'default';
 
 // --- 初始化 ---
 async function init() {
@@ -417,14 +434,30 @@ resultPreview.addEventListener('input', () => {
 // 设置
 toggleSettings.addEventListener('click', () => {
   settingsPanel.classList.toggle('hidden');
-  if (!settingsPanel.classList.contains('hidden')) historyPanel.classList.add('hidden');
+  if (!settingsPanel.classList.contains('hidden')) {
+    historyPanel.classList.add('hidden');
+    memoPanel.classList.add('hidden');
+    memoEditor.classList.add('hidden');
+  }
 });
 
 toggleHistory.addEventListener('click', () => {
   historyPanel.classList.toggle('hidden');
   if (!historyPanel.classList.contains('hidden')) {
     settingsPanel.classList.add('hidden');
+    memoPanel.classList.add('hidden');
+    memoEditor.classList.add('hidden');
     loadHistoryUI();
+  }
+});
+
+toggleMemo.addEventListener('click', () => {
+  memoPanel.classList.toggle('hidden');
+  if (!memoPanel.classList.contains('hidden')) {
+    settingsPanel.classList.add('hidden');
+    historyPanel.classList.add('hidden');
+    memoEditor.classList.add('hidden');
+    loadMemoUI();
   }
 });
 
@@ -450,6 +483,121 @@ clearHistoryBtn.addEventListener('click', async () => {
     await clearHistory();
     await loadHistoryUI();
     showToast('历史已清空');
+  }
+});
+
+// ========== 备忘录 ==========
+
+async function loadMemoUI() {
+  const memos = await getMemos();
+  if (memos.length === 0) {
+    memoList.innerHTML = '<p class="empty-hint">暂无备忘录，点击"+ 新建"创建</p>';
+    return;
+  }
+  const colors = {
+    default: '#f5f5f5', red: '#ffebee', orange: '#fff3e0',
+    blue: '#e3f2fd', green: '#e8f5e9', purple: '#f3e5f5'
+  };
+  memoList.innerHTML = memos.map(m => `
+    <div class="memo-card" data-id="${m.id}" style="background:${colors[m.color] || colors.default}">
+      <div class="memo-card-title">${m.title || '无标题'}</div>
+      <div class="memo-card-text">${(m.content || '').slice(0, 150)}${(m.content?.length > 150) ? '...' : ''}</div>
+      <div class="memo-card-meta">${new Date(m.timestamp).toLocaleString('zh-CN')}</div>
+      <div class="memo-card-actions">
+        <button class="btn-sm memo-use" data-id="${m.id}">复制到结果区</button>
+        <button class="btn-sm memo-edit" data-id="${m.id}">编辑</button>
+        <button class="btn-sm memo-delete" data-id="${m.id}">删除</button>
+      </div>
+    </div>
+  `).join('');
+
+  memoList.querySelectorAll('.memo-edit').forEach(btn =>
+    btn.addEventListener('click', () => openMemoEditor(btn.dataset.id)));
+  memoList.querySelectorAll('.memo-delete').forEach(btn =>
+    btn.addEventListener('click', () => doDeleteMemo(btn.dataset.id)));
+  memoList.querySelectorAll('.memo-use').forEach(btn =>
+    btn.addEventListener('click', async () => {
+      const memos = await getMemos();
+      const m = memos.find(mm => mm.id === btn.dataset.id);
+      if (m) {
+        resultPreview.value = m.content;
+        resultCount.textContent = `${m.content.length} 字符`;
+        updateButtons();
+      }
+    }));
+}
+
+async function openMemoEditor(id) {
+  if (id) {
+    const memos = await getMemos();
+    const m = memos.find(mm => mm.id === id);
+    if (!m) return;
+    editingMemoId = id;
+    editingMemoColor = m.color || 'default';
+    memoEditorTitle.textContent = '编辑备忘录';
+    memoTitleInput.value = m.title || '';
+    memoContentInput.value = m.content || '';
+  } else {
+    editingMemoId = null;
+    editingMemoColor = 'default';
+    memoEditorTitle.textContent = '新建备忘录';
+    memoTitleInput.value = '';
+    memoContentInput.value = '';
+  }
+  updateColorDots();
+  memoPanel.classList.add('hidden');
+  memoEditor.classList.remove('hidden');
+  memoTitleInput.focus();
+}
+
+function updateColorDots() {
+  memoColorRow.querySelectorAll('.color-dot').forEach(d => {
+    d.classList.toggle('active', d.dataset.color === editingMemoColor);
+  });
+}
+
+async function doSaveMemo() {
+  const title = memoTitleInput.value.trim();
+  const content = memoContentInput.value.trim();
+  if (!title && !content) { showToast('标题或内容不能都为空', 'error'); return; }
+
+  if (editingMemoId) {
+    await updateMemo(editingMemoId, { title, content, color: editingMemoColor });
+    showToast('已更新');
+  } else {
+    await addMemo({ title, content, color: editingMemoColor });
+    showToast('已保存');
+  }
+  memoEditor.classList.add('hidden');
+  memoPanel.classList.remove('hidden');
+  await loadMemoUI();
+}
+
+async function doDeleteMemo(id) {
+  if (!confirm('确定删除这条备忘录？')) return;
+  await deleteMemo(id);
+  await loadMemoUI();
+  showToast('已删除');
+}
+
+// Memo events
+memoBackBtn.addEventListener('click', () => {
+  memoEditor.classList.add('hidden');
+  memoPanel.classList.remove('hidden');
+  loadMemoUI();
+});
+memoSaveBtn.addEventListener('click', doSaveMemo);
+newMemoBtn.addEventListener('click', () => openMemoEditor(null));
+clearMemosBtn.addEventListener('click', async () => {
+  if (!confirm('确定清空所有备忘录？')) return;
+  await chrome.storage.sync.set({ memos: [] });
+  await loadMemoUI();
+  showToast('已清空');
+});
+memoColorRow.addEventListener('click', (e) => {
+  if (e.target.classList.contains('color-dot')) {
+    editingMemoColor = e.target.dataset.color;
+    updateColorDots();
   }
 });
 

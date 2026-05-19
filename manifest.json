@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "网页智能分析助手",
-  "version": "2.0.0",
+  "version": "2.1.0",
   "description": "读取网页内容，语音输入，拍照识图，AI 分析生成文本，自动填入页面输入框",
   "update_url": "https://godbless1228.github.io/edge-web-analyzer/updates.xml",
   "minimum_edge_version": "114.0",

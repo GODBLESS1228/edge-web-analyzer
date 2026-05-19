@@ -11,6 +11,7 @@
     <header class="header">
       <h1>网页智能分析助手</h1>
       <div class="header-actions">
+        <button id="toggleMemo" class="icon-btn" title="备忘录">📝</button>
         <button id="toggleHistory" class="icon-btn" title="历史记录">📋</button>
         <button id="toggleSettings" class="icon-btn" title="设置">⚙️</button>
       </div>
@@ -69,6 +70,39 @@
         <button id="saveSettings" class="btn btn-primary">保存设置</button>
         <button id="resetSettings" class="btn btn-secondary">恢复默认</button>
       </div>
+    </div>
+
+    <!-- 备忘录面板 -->
+    <div id="memoPanel" class="settings-panel hidden">
+      <div class="history-header">
+        <span>📝 备忘录</span>
+        <div>
+          <button id="newMemoBtn" class="btn btn-primary btn-sm">+ 新建</button>
+          <button id="clearMemosBtn" class="btn btn-secondary btn-sm">清空</button>
+        </div>
+      </div>
+      <div id="memoList" class="memo-list">
+        <p class="empty-hint">暂无备忘录</p>
+      </div>
+    </div>
+
+    <!-- 备忘录编辑器 -->
+    <div id="memoEditor" class="settings-panel hidden">
+      <div class="history-header">
+        <button id="memoBackBtn" class="btn btn-secondary btn-sm">← 返回</button>
+        <span id="memoEditorTitle">新建备忘录</span>
+        <button id="memoSaveBtn" class="btn btn-primary btn-sm">保存</button>
+      </div>
+      <div class="memo-color-row" id="memoColorRow">
+        <span class="color-dot default active" data-color="default"></span>
+        <span class="color-dot red" data-color="red"></span>
+        <span class="color-dot orange" data-color="orange"></span>
+        <span class="color-dot blue" data-color="blue"></span>
+        <span class="color-dot green" data-color="green"></span>
+        <span class="color-dot purple" data-color="purple"></span>
+      </div>
+      <input type="text" id="memoTitleInput" class="memo-title-input" placeholder="标题">
+      <textarea id="memoContentInput" class="memo-content-input" rows="8" placeholder="输入内容..."></textarea>
     </div>
 
     <!-- 历史面板 -->

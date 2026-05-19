@@ -19,6 +19,7 @@
 
     <nav class="tabs">
       <button class="tab active" data-tab="main">操作</button>
+      <button class="tab" data-tab="memo">📝 备忘录</button>
       <button class="tab" data-tab="history">历史</button>
     </nav>
 
@@ -65,6 +66,40 @@
           <span id="resultCount" class="count"></span>
         </div>
         <textarea id="resultPreview" class="content-area result-area" placeholder="点击"AI 生成"获取结果..."></textarea>
+      </div>
+    </div>
+
+    <!-- 备忘录面板 -->
+    <div id="tabMemo" class="tab-content hidden">
+      <div class="memo-actions">
+        <button id="newMemoBtn" class="btn btn-primary btn-sm">+ 新建</button>
+        <span id="memoCount" class="count"></span>
+      </div>
+      <div id="memoList" class="memo-list">
+        <p class="empty-hint">暂无备忘录</p>
+      </div>
+    </div>
+
+    <!-- 备忘录编辑覆盖层 -->
+    <div id="memoEditor" class="overlay hidden">
+      <div class="overlay-content memo-editor-content">
+        <div class="overlay-header">
+          <button id="memoBackBtn" class="icon-btn">←</button>
+          <h2 id="memoEditorTitle">新建备忘录</h2>
+          <button id="memoSaveBtn" class="btn btn-primary btn-sm">保存</button>
+        </div>
+        <div class="memo-editor-body">
+          <input type="text" id="memoTitleInput" class="memo-title-input" placeholder="标题">
+          <div class="memo-color-row" id="memoColorRow">
+            <span class="color-dot default active" data-color="default"></span>
+            <span class="color-dot red" data-color="red"></span>
+            <span class="color-dot orange" data-color="orange"></span>
+            <span class="color-dot blue" data-color="blue"></span>
+            <span class="color-dot green" data-color="green"></span>
+            <span class="color-dot purple" data-color="purple"></span>
+          </div>
+          <textarea id="memoContentInput" class="memo-content-input" rows="8" placeholder="输入内容...&#10;&#10;💡 提示：可将 AI 生成结果粘贴到这里保存"></textarea>
+        </div>
       </div>
     </div>
 
