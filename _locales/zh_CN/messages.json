@@ -1,0 +1,8 @@
+{
+  "appName": {
+    "message": "网页智能分析助手"
+  },
+  "appDescription": {
+    "message": "读取网页内容，语音输入，拍照识图，AI 分析生成文本，自动填入页面输入框"
+  }
+}

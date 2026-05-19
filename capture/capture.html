@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <title id="pageTitle">拍照识图</title>
+  <link rel="stylesheet" href="capture.css">
+</head>
+<body>
+  <div class="container">
+    <!-- 顶部导航 -->
+    <header class="header">
+      <button id="closeBtn" class="icon-btn">✕ 返回</button>
+      <h1 id="modeTitle">📷 拍照识图</h1>
+      <div class="spacer"></div>
+    </header>
+
+    <!-- 相机模式 -->
+    <div id="cameraMode" class="mode-content">
+      <div class="capture-area" id="captureArea">
+        <input type="file" id="fileInput" accept="image/*" capture="environment">
+        <label for="fileInput" class="capture-btn">
+          <span class="capture-icon">📷</span>
+          <span class="capture-text">点击拍照或选择图片</span>
+        </label>
+      </div>
+
+      <!-- 图片预览 -->
+      <div id="imagePreview" class="image-preview hidden">
+        <img id="previewImg" src="" alt="预览">
+        <button id="retakeBtn" class="btn btn-secondary">重新拍照</button>
+      </div>
+
+      <!-- OCR 结果 -->
+      <div id="ocrResult" class="result-section hidden">
+        <div class="section-header">📝 识别结果（可编辑）</div>
+        <textarea id="ocrText" class="content-area" rows="6" placeholder="识别中..."></textarea>
+        <div class="btn-row">
+          <button id="useOcrBtn" class="btn btn-primary">📝 使用此文本并返回</button>
+        </div>
+      </div>
+
+      <!-- 进度 -->
+      <div id="cameraProgress" class="progress-bar hidden">
+        <div class="progress-fill"></div>
+      </div>
+      <div id="cameraStatus" class="status-text"></div>
+    </div>
+
+    <!-- 语音模式 -->
+    <div id="voiceMode" class="mode-content hidden">
+      <div class="voice-area">
+        <button id="voiceToggle" class="voice-btn">
+          <span id="voiceIcon">🎤</span>
+          <span id="voiceLabel">点击开始录音</span>
+        </button>
+        <p class="voice-hint" id="voiceHint">支持中文普通话、英文、粤语</p>
+      </div>
+
+      <div id="voiceResult" class="result-section hidden">
+        <div class="section-header">🎙️ 语音识别结果（可编辑）</div>
+        <textarea id="voiceText" class="content-area" rows="6" placeholder="开始说话..."></textarea>
+        <div class="btn-row">
+          <button id="clearVoiceBtn" class="btn btn-secondary">清空</button>
+          <button id="useVoiceBtn" class="btn btn-primary">📝 使用此文本并返回</button>
+        </div>
+      </div>
+
+      <div id="voiceStatus" class="status-text"></div>
+    </div>
+
+    <!-- Toast -->
+    <div id="toast" class="toast hidden"></div>
+  </div>
+
+  <script type="module" src="capture.js"></script>
+</body>
+</html>
