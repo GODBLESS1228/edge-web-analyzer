@@ -121,6 +121,7 @@ function applySettingsToUI() {
   S('#baseUrl').value = settings.baseUrl || defaults.baseUrl;
   S('#model').value = settings.model || defaults.model;
   S('#visionModel').value = settings.visionModel || defaults.visionModel;
+  S('#visionBaseUrl').value = settings.visionBaseUrl || defaults.visionBaseUrl;
   S('#targetDomains').value = (settings.targetDomains || []).join('\n');
   S('#speechLang').value = settings.speechLang || 'zh-CN';
   S('#systemPrompt').value = settings.systemPrompt || '';
@@ -132,6 +133,7 @@ async function collectSettings() {
   settings.baseUrl = S('#baseUrl').value.trim() || defaults.baseUrl;
   settings.model = S('#model').value;
   settings.visionModel = S('#visionModel').value;
+  settings.visionBaseUrl = S('#visionBaseUrl').value.trim() || defaults.visionBaseUrl;
   settings.targetDomains = S('#targetDomains').value.split('\n').map(s => s.trim()).filter(Boolean);
   settings.speechLang = S('#speechLang').value;
   settings.systemPrompt = S('#systemPrompt').value.trim();

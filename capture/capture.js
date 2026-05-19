@@ -92,7 +92,7 @@ fileInput.addEventListener('change', async (e) => {
     const resp = await callVision({
       apiKey: settings.apiKey,
       model: settings.visionModel,
-      baseUrl: settings.baseUrl,
+      baseUrl: settings.visionBaseUrl,
       imageBase64: base64
     });
 

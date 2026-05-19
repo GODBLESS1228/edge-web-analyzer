@@ -71,7 +71,7 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     return true;
   }
 
-  // 视觉模型请求（图片 OCR）
+  // 视觉模型请求（图片 OCR）— 使用独立的 Vision API 地址
   if (message.type === 'VISION_REQUEST') {
     const { apiKey, model, baseUrl, imageBase64, prompt } = message;
 
